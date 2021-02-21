@@ -19,7 +19,7 @@ class UsersApi(Resource):
         'description': 'Returns ALL the users',
         'responses': {
             '200': {
-                'description': 'Successfully get all the users',
+                'description': 'Successfully got all the users',
             }
         }
     })
@@ -43,7 +43,7 @@ class UsersApi(Resource):
         ],
         'responses': {
             '200': {
-                'description': 'Users',
+                'description': 'Successfully added new user',
             }
         }
     })
@@ -97,7 +97,7 @@ class UserApi(Resource):
         ],
         'responses': {
             '200': {
-                'description': 'Users',
+                'description': 'Successfully updated user',
             }
         }
     })
@@ -142,7 +142,7 @@ class UserApi(Resource):
         ],
         'responses': {
             '200': {
-                'description': 'Users',
+                'description': 'Successfully deleted user',
             }
         }
     })

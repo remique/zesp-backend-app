@@ -25,3 +25,23 @@ class User(Schema):
         },
     }
     required = ['email', 'password', 'firstname', 'surname', 'sex', 'active']
+
+
+class Institution(Schema):
+    type = 'object'
+    description = 'Must provide these when creating new institution'
+    properties = {
+        'name': {
+            'type': 'string'
+        },
+        'city': {
+            'type': 'string'
+        },
+        'address': {
+            'type': 'string'
+        },
+        'contact_number': {
+            'type': 'string'
+        },
+    }
+    required = ['name', 'city', 'address', 'contact_number']

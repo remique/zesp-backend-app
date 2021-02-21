@@ -14,15 +14,14 @@ class Testing(unittest.TestCase):
         pass
 
     def create_app(self):
-        app = Flask(__name__)
-        app.config['TESTING'] = True
+        self.app = Flask(__name__)
+        self.app.config['TESTING'] = True
         self.baseURL = "http://localhost:5000"
-        return app
+        pass
 
-    # def test_flask_app(self):
-    #     rv = self.client.get('/test_api')
-
-    #     assert rv.status_code == 200
+    def test_flask_app(self):
+        rv = self.client.get('/user')
+        assert rv.status_code == 200
 
 
 if __name__ == '__main__':
