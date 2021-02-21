@@ -35,7 +35,5 @@ def index():
     </head>"""
 
 
-if __name__ == '__main__':
-    init_db(app)
-    initialize_routes(api)
-    app.run(debug=True)
+init_db(app)
+initialize_routes(api)
