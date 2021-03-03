@@ -45,3 +45,28 @@ class Institution(Schema):
         },
     }
     required = ['name', 'city', 'address', 'contact_number']
+
+
+class Role(Schema):
+    type = 'object'
+    description = 'Must provide these when creating new role'
+    properties = {
+        'title': {
+            'type': 'string'
+        },
+    }
+    required = ['title']
+
+
+class UserRole(Schema):
+    type = 'object'
+    description = 'Must provide these when adding role to an user'
+    properties = {
+        'role_id': {
+            'type': 'integer'
+        },
+        'user_id': {
+            'type': 'integer'
+        },
+    }
+    required = ['role_id', 'user_id']

@@ -10,16 +10,13 @@ from flask_jwt_extended import JWTManager
 
 from flask_restful_swagger_2 import Api
 
+import config
+
 app = Flask(__name__)
 CORS(app, resources={r"*": {"origins": "*"}})
-# TODO: ustawic na MySQL, tylko dla testu SQLite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['JSON_SORT_KEYS'] = False
-app.config['CORS_HEADERS'] = 'Content-Type'
-app.config['SECRET_KEY'] = 'pz-backend-2020'
-app.config['JWT_SECRET_KEY'] = 'secret-key'
-jwt = JWTManager(app)
+app.config.from_object('config.DevelopmentConfig')
 
+jwt = JWTManager(app)
 api = Api(app, api_version='0.1',
           api_spec_url='/api/swagger',
           title='API aplikacji dla przedszkoli',
