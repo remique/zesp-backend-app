@@ -102,6 +102,12 @@ class RoleApi(Resource):
                 'type': 'object',
                 'required': 'true'
             },
+            {
+                'name': 'id',
+                'in': 'path',
+                'type': 'integer',
+                'description': 'Role identifier'
+            }
         ],
         'responses': {
             '200': {
@@ -253,4 +259,3 @@ class UserRoleApi(Resource):
             return jsonify({'msg': 'Role removed'})
         else:
             return jsonify({'msg': 'User doesnt have selected role'})
-

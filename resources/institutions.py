@@ -61,6 +61,7 @@ class InstitutionsApi(Resource):
 
         return institution_schema.jsonify(new_institution)
 
+
 class InstitutionApi(Resource):
 
     # GET single institution with given id
@@ -83,6 +84,12 @@ class InstitutionApi(Resource):
                 'type': 'object',
                 'required': 'true'
             },
+            {
+                'name': 'id',
+                'in': 'path',
+                'description': 'Institution identifier',
+                'type': 'integer'
+            }
         ],
         'responses': {
             '200': {
@@ -129,7 +136,8 @@ class InstitutionApi(Resource):
     })
     def delete(self, id):
         """Delete institution"""
-        institution = db.session.query(Institution).filter(Institution.id == id).first()
+        institution = db.session.query(Institution).filter(
+            Institution.id == id).first()
         db.session.delete(institution)
         db.session.commit()
 
