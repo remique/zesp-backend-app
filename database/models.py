@@ -8,8 +8,13 @@ user_roles = db.Table('user_roles',
                       db.Column('role_id', db.Integer, db.ForeignKey(
                           'role.id'), primary_key=True),
                       db.Column('user_id', db.Integer, db.ForeignKey(
-                          'user.id'), primary_key=True)
-                      )
+                          'user.id'), primary_key=True))
+
+user_groups = db.Table('user_groups',
+                       db.Column('group_id', db.Integer, db.ForeignKey(
+                           'group.id'), primary_key=True),
+                       db.Column('user_id', db.Integer, db.ForeignKey(
+                           'user.id'), primary_key=True))
 
 
 class Role(db.Model):
@@ -40,6 +45,8 @@ class User(db.Model):
                            default=db.func.current_timestamp())
     roles = db.relationship('Role', secondary=user_roles,
                             backref=db.backref('users', lazy='dynamic'))
+    groups = db.relationship('Group', secondary=user_groups,
+                             backref=db.backref('users', lazy='dynamic'))
 
     def __init__(self, email, password, firstname, surname, sex, active, created_at, updated_at):
         self.email = email
@@ -66,10 +73,24 @@ class Institution(db.Model):
         self.contact_number = contact_number
 
 
-class UserRole(db.Model):
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'), primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+# class UserRole(db.Model):
+#     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
 
-    def __init__(self, role_id, user_id):
-        self.role_id = role_id
-        self.user_id = user_id
+#     def __init__(self, role_id, user_id):
+#         self.role_id = role_id
+#         self.user_id = user_id
+
+
+class Group(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False,
+                           default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, nullable=False,
+                           default=db.func.current_timestamp())
+
+    def __init__(self, name, created_at, updated_at):
+        self.name = name
+        self.created_at = created_at
+        self.updated_at = updated_at

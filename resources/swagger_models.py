@@ -70,3 +70,28 @@ class UserRole(Schema):
         },
     }
     required = ['role_id', 'user_id']
+
+
+class Group(Schema):
+    type = 'object'
+    description = 'Must provide these when creating new group'
+    properties = {
+        'name': {
+            'type': 'string'
+        },
+    }
+    required = ['name']
+
+
+class UserGroup(Schema):
+    type = 'object'
+    description = 'Must provide these when adding group to an user'
+    properties = {
+        'group_id': {
+            'type': 'integer'
+        },
+        'user_id': {
+            'type': 'integer'
+        },
+    }
+    required = ['group_id', 'user_id']

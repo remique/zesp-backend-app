@@ -1,6 +1,6 @@
 from flask import Response, request, jsonify, make_response, json
 from database.models import Role, User, user_roles
-from .schemas import RoleSchema, UserRoleSchema
+from .schemas import RoleSchema
 from database.db import db
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -12,9 +12,6 @@ from .swagger_models import UserRole as UserRoleSwaggerModel
 
 role_schema = RoleSchema()
 roles_schema = RoleSchema(many=True)
-
-user_role_schema = UserRoleSchema()
-user_roles_schema = UserRoleSchema(many=True)
 
 
 class RolesApi(Resource):
