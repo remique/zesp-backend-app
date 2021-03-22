@@ -18,6 +18,7 @@ pyjwt = "*"
 flask-jwt-extended = "*"
 flask-restful-swagger = "*"
 flask-restful-swagger-2 = "*"
+flask-apscheduler = "*"
 
 [requires]
 python_version = "3.7"

@@ -5,6 +5,7 @@ from flask_cors import CORS
 from flask_restful import Api
 
 from database.db import db, init_db
+from scheduler import scheduler
 from resources.routes import initialize_routes
 from flask_jwt_extended import JWTManager
 
@@ -27,27 +28,27 @@ domyślnie były rozwinięte to usuwamy `docExpansion=none&`. \
 do okienka **Authorize**. Po wpisaniu dobrego tokenu możemy w całości korzystać z API. 
 """
 
-#App factory
+
 def create_app(cfg):
-	app = Flask(__name__)
-	CORS(app, resources={r"*": {"origins": "*"}})
-	app.config.from_object(cfg)
-	jwt = JWTManager(app)
+    app = Flask(__name__)
+    CORS(app, resources={r"*": {"origins": "*"}})
+    app.config.from_object(cfg)
+    jwt = JWTManager(app)
 
-	api = Api(app, api_version='0.1',
-		api_spec_url='/api/swagger',
-		title='API aplikacji dla przedszkoli',
-		description=description,
-		security_definitions=security_definitions)
+    api = Api(app, api_version='0.1',
+              api_spec_url='/api/swagger',
+              title='API aplikacji dla przedszkoli',
+              description=description,
+              security_definitions=security_definitions)
 
-
-	@app.route('/api')
-	def index():
-		return """<head>
+    @app.route('/api')
+    def index():
+        return """<head>
 		<meta http-equiv="refresh" content="0; url=http://petstore.swagger.io/?docExpansion=none&url=http://localhost:5000/api/swagger.json" />
 		</head>"""
 
-	init_db(app)
-	initialize_routes(api)
-	return app
-
+    init_db(app)
+    initialize_routes(api)
+    scheduler.init_app(app)
+    scheduler.start()
+    return app

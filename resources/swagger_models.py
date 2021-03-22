@@ -109,3 +109,17 @@ class UserGroup(Schema):
         },
     }
     required = ['group_id', 'user_id']
+
+
+class Activity(Schema):
+    type = 'object'
+    description = 'Must provide these when editing user\'s activity'
+    properties = {
+        'sleep': {
+            'type': 'integer'
+        },
+        'food_scale': {
+            'type': 'integer'
+        },
+    }
+    required = ['sleep', 'food_scale']

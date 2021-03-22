@@ -1,5 +1,5 @@
 from flask import Response, request, jsonify, make_response, json
-from database.models import User
+from database.models import User, Activity
 from .schemas import UserSchema
 from database.db import db
 from flask_jwt_extended import (
@@ -9,6 +9,7 @@ from flask_jwt_extended import (
 from flask_restful_swagger_2 import Api, swagger, Resource, Schema
 from .swagger_models import User as UserSwaggerModel
 from .swagger_models import Login as LoginSwaggerModel
+from flask_sqlalchemy import SQLAlchemy
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
@@ -76,6 +77,11 @@ class UsersApi(Resource):
             return jsonify({'msg': 'User with given email address already exists'})
 
         db.session.add(new_user)
+
+        # Now create an empty activity for the user
+        new_activity = Activity(0, 0)
+        new_user.activity = new_activity
+
         db.session.commit()
 
         return user_schema.jsonify(new_user)

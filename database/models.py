@@ -47,6 +47,8 @@ class User(db.Model):
                             backref=db.backref('users', lazy='dynamic'))
     groups = db.relationship('Group', secondary=user_groups,
                              backref=db.backref('users', lazy='dynamic'))
+    activity = db.relationship(
+        'Activity', backref='user', lazy=True, uselist=False)
 
     def __init__(self, email, password, firstname, surname, sex, active, created_at, updated_at):
         self.email = email
@@ -73,15 +75,6 @@ class Institution(db.Model):
         self.contact_number = contact_number
 
 
-# class UserRole(db.Model):
-#     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-
-#     def __init__(self, role_id, user_id):
-#         self.role_id = role_id
-#         self.user_id = user_id
-
-
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -94,3 +87,15 @@ class Group(db.Model):
         self.name = name
         self.created_at = created_at
         self.updated_at = updated_at
+
+
+class Activity(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sleep = db.Column(db.Integer, nullable=False)
+    food_scale = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __init__(self, sleep, food_scale):
+        self.sleep = sleep
+        self.food_scale = food_scale
+        # self.user_id = user_id
