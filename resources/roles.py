@@ -225,10 +225,18 @@ class UserRoleApi(Resource):
         if(role in user.roles):
             return jsonify({'msg': 'User already has this role'})
 
+        message = ''
+
+        if user.roles:
+            user.roles.clear()
+            message = 'Successfully updated role of the user'
+        else:
+            message = 'Successfully added role to the user'
+
         user.roles.append(role)
         db.session.commit()
 
-        return jsonify({'msg': 'Successfully added role to the user'})
+        return jsonify({'msg': message})
 
     @swagger.doc({
         'tags': ['userrole'],
@@ -266,3 +274,4 @@ class UserRoleApi(Resource):
             return jsonify({'msg': 'Role removed'})
         else:
             return jsonify({'msg': 'User doesnt have selected role'})
+
