@@ -38,6 +38,7 @@ class UsersApi(Resource):
         """Return ALL the users"""
         all_users = User.query.all()
         result = users_schema.dump(all_users)
+
         return jsonify(result)
 
     @swagger.doc({

@@ -162,6 +162,9 @@ class ConversationReply(db.Model):
     reply_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     conv_id = db.Column(db.Integer, db.ForeignKey('conversation.id'))
 
+    reply_user = db.relationship(
+        'User', backref='conversation_reply', lazy=True, uselist=False)
+
     def __init__(self, reply, reply_time, reply_user_id, conv_id):
         self.reply = reply
         self.reply_time = reply_time

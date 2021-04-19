@@ -78,7 +78,6 @@ class ConversationsApi(Resource):
     @jwt_required()
     def post(self):
         """Add a new conversation for current user"""
-        # user_one = request.json['user_one']
         jwt_email = get_jwt_identity()
         current_user = User.query.filter_by(email=jwt_email).first()
 
