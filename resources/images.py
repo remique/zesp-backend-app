@@ -14,6 +14,7 @@ images_schema = ImageSchema(many=True)
 UPLOAD_FOLDER = './static/uploaded_images/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
 
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -65,6 +66,9 @@ class ImagesApi(Resource):
             return jsonify({'msg': 'No selected file'})
         if file and allowed_file(file.filename):
             filename = str(uuid.uuid4()) + '.' + file.filename.split(".")[-1]
+
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
 
             file.save(os.path.join(UPLOAD_FOLDER, filename))
             url = url_for('static', filename="uploaded_images/"+filename)
@@ -140,9 +144,8 @@ class ImageApi(Resource):
             os.remove('.'+path)
         except OSError:
             pass
-            
+
         db.session.delete(image)
         db.session.commit()
 
         return jsonify({'msg': 'Successfully removed image'})
-
