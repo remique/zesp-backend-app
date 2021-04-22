@@ -20,6 +20,17 @@ class UserSchema(ma.Schema):
         dateformat = '%Y-%m-%d %H:%M:%S%z'
     roles = ma.Nested('RoleSchema', many=True)
 
+
+class UserGetSchema(ma.Schema):
+    class Meta:
+        model = User
+        ordered = True
+        fields = ("id", "email", "firstname", "surname",
+                  "institution_id", "sex", "active", "created_at", "updated_at", "roles")
+        dateformat = '%Y-%m-%d %H:%M:%S%z'
+    roles = ma.Nested('RoleSchema', many=True)
+
+
 class InstitutionSchema(ma.Schema):
     class Meta:
         model = Institution
@@ -86,17 +97,21 @@ class UserNestedSchema(ma.Schema):
         fields = ("id", "email", "firstname", "surname",
                   "sex", "active")
 
+
 class ImageSchema(ma.Schema):
     class Meta:
         model = Image
         ordered = True
         fields = ("id", "url", "created_at", "updated_at")
 
+
 class NewsSchema(ma.Schema):
     class Meta:
         model = News
         ordered = True
-        fields = ("title", "details", "status", "view_count", "created_at", "updated_at", "category_id", "institution_id", "author_id", "image_id")
+        fields = ("title", "details", "status", "view_count", "created_at",
+                  "updated_at", "category_id", "institution_id", "author_id", "image_id")
+
 
 class NewsCategorySchema(ma.Schema):
     class Meta:

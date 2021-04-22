@@ -1,6 +1,6 @@
 from flask import Response, request, jsonify, make_response, json
 from database.models import User, Activity
-from .schemas import UserSchema, UserTokenSchema
+from .schemas import UserGetSchema, UserTokenSchema
 from database.db import db
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -14,8 +14,8 @@ from .security import generate_salt, generate_hash
 
 import math
 
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
+user_schema = UserGetSchema()
+users_schema = UserGetSchema(many=True)
 
 user_token_schema = UserTokenSchema()
 
