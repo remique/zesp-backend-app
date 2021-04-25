@@ -23,12 +23,9 @@ class User(Schema):
         'active': {
             'type': 'integer',
         },
-        'institution_id': {
-            'type': 'integer',
-        },
     }
     required = ['email', 'password', 'firstname',
-                'surname', 'sex', 'active', 'institution_id']
+                'surname', 'sex', 'active']
 
 
 class Login(Schema):
@@ -194,6 +191,7 @@ class ConversationReply(Schema):
     }
     required = ['reply', 'conv_id']
 
+
 class Image(Schema):
     type = 'object'
     description = 'Must provide these when creating new image'
@@ -203,6 +201,7 @@ class Image(Schema):
         }
     }
     required = ['url']
+
 
 class News(Schema):
     type = 'object'
@@ -229,6 +228,7 @@ class News(Schema):
     }
     required = ['title', 'details', 'priority']
 
+
 class NewsCategory(Schema):
     type = 'object'
     description = 'Must provide these when creating news category'
@@ -238,3 +238,4 @@ class NewsCategory(Schema):
         }
     }
     required = ['name']
+

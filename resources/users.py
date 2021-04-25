@@ -120,17 +120,26 @@ class UsersApi(Resource):
             '200': {
                 'description': 'Successfully added new user',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def post(self):
         """Add a new user"""
+        current_user_jwt = get_jwt()
+        current_user_institution_id = current_user_jwt['institution_id']
+
         email = request.json['email']
         password = request.json['password']
         firstname = request.json['firstname']
         surname = request.json['surname']
         sex = request.json['sex']
         active = request.json['active']
-        institution_id = request.json['institution_id']
+        institution_id = current_user_institution_id
         created_at = db.func.current_timestamp()
         updated_at = db.func.current_timestamp()
 

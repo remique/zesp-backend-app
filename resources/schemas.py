@@ -49,7 +49,7 @@ class GroupSchema(ma.Schema):
     class Meta:
         model = Role
         ordered = True
-        fields = ("id", "name", "created_at", "updated_at")
+        fields = ("id", "name", "institution_id", "created_at", "updated_at")
 
 
 class ActivitySchema(ma.Schema):
@@ -110,8 +110,8 @@ class ConversationReplySchema(ma.Schema):
         model = ConversationReply
         ordered = True
         fields = ("id", "reply", "reply_time",
-                  "reply_user", "conv_id")
-    reply_user = ma.Nested('UserNestedSchema', many=False)
+                  "reply_user_id", "conv_id")
+    # reply_user = ma.Nested('UserNestedSchema', many=False)
 
 
 class UserNestedSchema(ma.Schema):

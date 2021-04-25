@@ -84,6 +84,9 @@ class Institution(db.Model):
     users = db.relationship(
         'User', cascade="all,delete", backref='institution')
 
+    groups = db.relationship(
+        'Group', cascade="all,delete", backref='institution')
+
     def __init__(self, name, city, address, contact_number):
         self.name = name
         self.city = city
@@ -98,9 +101,11 @@ class Group(db.Model):
                            default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, nullable=False,
                            default=db.func.current_timestamp())
+    institution_id = db.Column(db.Integer, db.ForeignKey('institution.id'))
 
-    def __init__(self, name, created_at, updated_at):
+    def __init__(self, name, institution_id, created_at, updated_at):
         self.name = name
+        self.institution_id = institution_id
         self.created_at = created_at
         self.updated_at = updated_at
 
@@ -236,4 +241,3 @@ class News(db.Model):
         self.category_id = category_id
         self.institution_id = institution_id
         self.author_id = author_id
-
