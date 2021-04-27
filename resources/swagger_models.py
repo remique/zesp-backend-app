@@ -239,3 +239,16 @@ class NewsCategory(Schema):
     }
     required = ['name']
 
+
+class PasswordChange(Schema):
+    type = 'object'
+    description = 'Must provide these when changing password'
+    properties = {
+        'password': {
+            'type': 'string'
+        },
+        'repeat_password': {
+            'type': 'string'
+        }
+    }
+    required = ['password', 'repeat_password']

@@ -9,6 +9,7 @@ from flask_jwt_extended import (
 from flask_restful_swagger_2 import Api, swagger, Resource, Schema
 from .swagger_models import User as UserSwaggerModel
 from .swagger_models import Login as LoginSwaggerModel
+from .swagger_models import PasswordChange as PasswordChangeSwaggerModel
 from flask_sqlalchemy import SQLAlchemy
 from .security import generate_salt, generate_hash
 
@@ -390,3 +391,56 @@ class ProtectedApi(Resource):
         claims = get_jwt()
         return jsonify({"msg": claims})
         # return jsonify({"msg": "Access granted"})
+
+
+class PasswordChangeApi(Resource):
+    @swagger.doc({
+        'tags': ['user'],
+        'description': 'Change user password',
+        'parameters': [
+            {
+                'name': 'Body',
+                'in': 'body',
+                'schema': PasswordChangeSwaggerModel,
+                'type': 'object',
+                'required': 'true'
+            },
+        ],
+        'responses': {
+            '200': {
+                'description': 'Successfully changed user password',
+            }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
+    })
+    @jwt_required()
+    def post(self):
+        """Changes current user password"""
+        claims_jwt = get_jwt()
+        claims_id = claims_jwt['id']
+
+        current_user = User.query.get(claims_id)
+
+        password = request.json['password']
+        password_repeat = request.json['repeat_password']
+
+        # Check if passwords match
+        if password != password_repeat:
+            return jsonify({"msg": "Passwords do not match!"})
+
+        # Get current user salt and generate password
+        password_key = generate_hash(password, current_user.salt)
+
+        # Check if password is new
+        if current_user.password == password_key:
+            return jsonify({"msg": "Password must be different from the current one"})
+
+        current_user.password = password_key
+
+        db.session.commit()
+
+        return jsonify({"msg": "Password changed successfully"})

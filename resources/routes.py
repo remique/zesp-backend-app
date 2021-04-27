@@ -1,4 +1,7 @@
-from .users import UserApi, UsersApi, LoginApi, ProtectedApi, RefreshTokenApi
+from .users import (
+    UserApi, UsersApi, LoginApi, ProtectedApi,
+    RefreshTokenApi, PasswordChangeApi
+)
 from .institutions import InstitutionsApi, InstitutionApi
 from .roles import RolesApi, RoleApi, UserRoleApi, UserRolesApi
 from .groups import GroupApi, GroupsApi, UserGroupsApi, UserGroupApi
@@ -8,8 +11,10 @@ from .conversations import ConversationsApi, ConversationReplyApi, ConversationR
 from .images import ImageApi, ImagesApi
 from .news import NewsApi, NewsMApi, NewsCategoryApi, NewsCategoriesApi
 
+
 def initialize_routes(api):
     api.add_resource(UsersApi, '/user')
+    api.add_resource(PasswordChangeApi, '/change_password')
     api.add_resource(UserApi, '/user/<id>')
 
     api.add_resource(InstitutionsApi, '/institution')
@@ -48,3 +53,4 @@ def initialize_routes(api):
     api.add_resource(NewsApi, '/news/<id>')
     api.add_resource(NewsCategoryApi, '/newscategory/<id>')
     api.add_resource(NewsCategoriesApi, '/newscategory')
+
