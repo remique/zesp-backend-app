@@ -87,7 +87,7 @@ class ConversationLastSchema(ma.Schema):
     class Meta:
         model = Conversation
         ordered = True
-        fields = ("id", "user_one_obj", "user_two_obj", "conversation_replies")
+        fields = ("id", "user_two_obj", "conversation_replies")
 
     conversation_replies = ma.Nested(
         'ConversationReplyLastSchema', many=True, data_key='last_reply')

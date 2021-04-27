@@ -105,6 +105,9 @@ class ConversationsApi(Resource):
         for convo in conversations_query:
             conversations_copy.append(convo)
 
+            if convo.user_two == current_user.id:
+                convo.user_two = convo.user_one
+
         # For each conversation we clear all the replies and leave out
         # only the last one
         for convo in conversations_copy:
