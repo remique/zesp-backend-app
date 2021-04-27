@@ -31,6 +31,14 @@ class UserGetSchema(ma.Schema):
     roles = ma.Nested('RoleSchema', many=True)
 
 
+class UserLookupSchema(ma.Schema):
+    class Meta:
+        model = User
+        ordered = True
+        fields = ("id", "email", "firstname", "surname",
+                  "sex", "institution_id")
+
+
 class InstitutionSchema(ma.Schema):
     class Meta:
         model = Institution

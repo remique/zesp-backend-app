@@ -252,3 +252,14 @@ class PasswordChange(Schema):
         }
     }
     required = ['password', 'repeat_password']
+
+
+class UserLookup(Schema):
+    type = 'object'
+    description = 'Must provide when doing user lookup'
+    properties = {
+        'name_like': {
+            'type': 'string'
+        }
+    }
+    required = ['name_like']
