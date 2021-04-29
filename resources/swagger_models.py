@@ -58,8 +58,24 @@ class Institution(Schema):
         'contact_number': {
             'type': 'string'
         },
+        'admin_email': {
+            'type': 'string'
+        },
+        'admin_password': {
+            'type': 'string'
+        },
+        'admin_firstname': {
+            'type': 'string'
+        },
+        'admin_surname': {
+            'type': 'string'
+        },
+        'admin_sex': {
+            'type': 'integer'
+        },
     }
-    required = ['name', 'city', 'address', 'contact_number']
+    required = ['name', 'city', 'address', 'contact_number', 'admin_email',
+                'admin_password', 'admin_firstname', 'admin_surname', 'admin_sex']
 
 
 class Role(Schema):
