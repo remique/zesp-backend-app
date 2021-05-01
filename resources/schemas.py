@@ -169,3 +169,5 @@ class AttendanceSchema(ma.Schema):
         model = Attendance
         ordered = True
         fields = ("id", "date", "present", "user_id")
+
+    date = ma.DateTime('%Y-%m-%d')

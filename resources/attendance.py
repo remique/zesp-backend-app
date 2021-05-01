@@ -4,7 +4,7 @@ from .schemas import AttendanceSchema
 from database.db import db
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
-    get_jwt_identity
+    get_jwt_identity, get_jwt
 )
 from flask_restful_swagger_2 import Api, swagger, Resource, Schema
 from .swagger_models import Attendance as AttendanceSwaggerModel
@@ -17,17 +17,74 @@ attendanceM_schema = AttendanceSchema(many=True)
 class AttendanceMApi(Resource):
     @swagger.doc({
         'tags': ['attendance'],
-        'description': 'Returns ALL the attendances',
+        'description': 'Returns ALL the attendances in current institution_id',
         'responses': {
             '200': {
                 'description': 'Successfully got all the attendances',
             }
-        }
+        },
+        'parameters': [
+            {
+                'name': 'date',
+                'in': 'query',
+                'type': 'string',
+                'format': 'date',
+                'description': '*Optional*: Filter by date'
+            },
+            {
+                'name': 'only_me',
+                'in': 'query',
+                'type': 'boolean',
+                'description': '*Optional*: Filter by logged in user only'
+            }
+        ],
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def get(self):
-        """Return ALL the attendances"""
+        """Return ALL the attendances in current institution_id"""
+        claims = get_jwt()
+        user_institution_id = claims['institution_id']
+        current_user_id = claims['id']
+
         all_attendances = Attendance.query.all()
-        result = attendanceM_schema.dump(all_attendances)
+
+        date_query = request.args.get('date')
+        only_me_query = request.args.get('only_me')
+
+        if only_me_query == 'true' and date_query is None:
+            attendances = Attendance.query.filter(
+                Attendance.user_id == current_user_id).all()
+            to_return = attendanceM_schema.dump(attendances)
+            return jsonify(to_return)
+
+        if date_query is not None:
+            # format_date = db.func.date(date_query)
+            format_date = datetime.strptime(date_query, '%Y-%m-%d').date()
+
+            all_attendances = Attendance.query.filter(
+                Attendance.date == format_date).all()
+
+            if only_me_query == 'true':
+                all_attendances = Attendance.query.filter(
+                    Attendance.date == format_date).filter(Attendance.user_id == current_user_id).all()
+
+        attendances_matching = []
+
+        for attendance in all_attendances:
+            # query user from the attendance
+            att_user = User.query.filter(User.id == attendance.user_id).first()
+
+            print(attendance.date)
+
+            if att_user.institution_id == user_institution_id:
+                attendances_matching.append(attendance)
+
+        result = attendanceM_schema.dump(attendances_matching)
         return jsonify(result)
 
     @swagger.doc({
@@ -46,19 +103,35 @@ class AttendanceMApi(Resource):
             '200': {
                 'description': 'Successfully added new attendance',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def post(self):
         """Add a new attendance"""
+        claims = get_jwt()
+        current_user_id = claims['id']
+
         date_str = request.json['date']
         present = request.json['present']
-        user_id = request.json['user_id']
+        user_id = current_user_id
 
         user = User.query.get(user_id)
         if not user:
             return jsonify({'msg': 'User does not exist'})
 
         date = datetime.strptime(date_str, '%Y-%m-%d').date()
+
+        does_exist = Attendance.query.filter(
+
+            Attendance.date == date).filter(Attendance.user_id == current_user_id).first()
+
+        if does_exist is not None:
+            return jsonify({'msg': 'Attendance for this date already exists'})
 
         new_attendance = Attendance(date, present, user_id)
 
