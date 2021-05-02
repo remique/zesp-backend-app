@@ -237,6 +237,11 @@ class UserApi(Resource):
         salt_str = generate_salt(16)
         key = generate_hash(password, salt_str)
 
+        # Check if new email already exists
+        does_exist = User.query.filter(User.email == email).first()
+        if does_exist is not None:
+            return jsonify({'msg': 'User with given email already exists'})
+
         user.email = email
         user.password = key
         user.salt = salt_str
