@@ -381,6 +381,8 @@ class AlbumImageApi(Resource):
         album.images.append(image)
 
         image.album_id = a_id
+        album.img_count = album.img_count + 1
+
         db.session.commit()
 
         return jsonify({'msg': 'Successfully added image to an album'})
@@ -417,6 +419,7 @@ class AlbumImageApi(Resource):
 
         if(image in album.images):
             result = album.images.remove(image)
+            album.img_count = album.img_count - 1
             db.session.commit()
             return jsonify({'msg': 'Album image removed'})
         else:

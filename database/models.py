@@ -259,6 +259,7 @@ class Album(db.Model):
     description = db.Column(db.String(128), nullable=True)
     institution_id = db.Column(db.Integer, db.ForeignKey(
         'institution.id'), nullable=False)
+    img_count = db.Column(db.Integer, nullable=False)
     images = db.relationship('Image', secondary=image_has_album_image,
                              backref=db.backref('albums', lazy='dynamic'))
 
@@ -269,6 +270,7 @@ class Album(db.Model):
         self.updated_at = updated_at
         self.description = description
         self.institution_id = institution_id
+        self.img_count = 0
 
 
 class Attendance(db.Model):

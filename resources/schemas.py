@@ -160,7 +160,7 @@ class AlbumSchema(ma.Schema):
     class Meta:
         model = Album
         ordered = True
-        fields = ("id", "name", "date", "created_at",
+        fields = ("id", "name", "date", "img_count", "created_at",
                   "updated_at", "description", "institution_id")
 
 
