@@ -77,7 +77,7 @@ class AlbumsApi(Resource):
         albums_total = Album.query.filter(
             Album.institution_id == user_institution_id).count()
 
-        albums_query = User.query.filter(User.institution_id == user_institution_id).offset(
+        albums_query = Album.query.filter(Album.institution_id == user_institution_id).offset(
             page_offset).limit(per_page).all()
         query_result = albums_schema.dump(albums_query)
 
@@ -107,16 +107,25 @@ class AlbumsApi(Resource):
             '200': {
                 'description': 'Successfully added new album',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def post(self):
         """Add a new album"""
+        claims = get_jwt()
+        user_institution_id = claims['institution_id']
+
         name = request.json['name']
         date_str = request.json['date']
         created_at = db.func.current_timestamp()
         updated_at = db.func.current_timestamp()
         description = request.json['description']
-        institution_id = request.json['institution_id']
+        institution_id = user_institution_id
 
         institution = Institution.query.get(institution_id)
         if not institution:
@@ -124,7 +133,8 @@ class AlbumsApi(Resource):
 
         date = datetime.strptime(date_str, '%Y-%m-%d').date()
 
-        new_album = Album(name, date, created_at, updated_at, description, institution_id)
+        new_album = Album(name, date, created_at, updated_at,
+                          description, institution_id)
 
         db.session.add(new_album)
         db.session.commit()
@@ -238,11 +248,11 @@ class AlbumApi(Resource):
         if not album:
             return jsonify({'msg': 'No album found'})
 
-
         db.session.delete(album)
         db.session.commit()
 
         return jsonify({'msg': 'Successfully removed album'})
+
 
 class AlbumImagesApi(Resource):
     @swagger.doc({
@@ -254,21 +264,85 @@ class AlbumImagesApi(Resource):
                 'description': 'Album identifier',
                 'in': 'path',
                 'type': 'integer'
-            }
+            },
+            {
+                'name': 'page',
+                'in': 'query',
+                'type': 'integer',
+                'description': '*Optional*: Which page to return'
+            },
+            {
+                'name': 'per_page',
+                'in': 'query',
+                'type': 'integer',
+                'description': '*Optional*: How many users to return per page'
+            },
         ],
         'responses': {
             '200': {
                 'description': 'Successfully got all the album images',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def get(self, albumid):
+        """Get contents of an album"""
+        claims = get_jwt()
+        user_institution_id = claims['institution_id']
+
         album = Album.query.get(albumid)
         if album is None:
             return jsonify({'msg': 'Album doesnt exist'})
+        images_total = Image.query.filter(Image.album_id == albumid).count()
 
-        images = images_schema.dump(album.images)
-        return jsonify(images)
+        MIN_PER_PAGE = 5
+        MAX_PER_PAGE = 30
+
+        page = request.args.get('page')
+        per_page = request.args.get('per_page')
+
+        if page is None or int(page) < 1:
+            page = 1
+
+        if per_page is None:
+            per_page = 15
+
+        if int(per_page) < MIN_PER_PAGE:
+            per_page = MIN_PER_PAGE
+
+        if int(per_page) > MAX_PER_PAGE:
+            per_page = MAX_PER_PAGE
+
+        last_page = math.ceil(int(images_total) / int(per_page))
+
+        if int(page) >= last_page:
+            page = int(last_page)
+
+        page_offset = (int(page) - 1) * int(per_page)
+
+        # Query the image with
+        images = Image.query.filter(Image.album_id == albumid)\
+            .order_by(Image.id.desc())\
+            .offset(page_offset)\
+            .limit(per_page).all()
+
+        images_dump = images_schema.dump(images)
+
+        result = {
+            "total": images_total,
+            "per_page": int(per_page),
+            "current_page": int(page),
+            "last_page": last_page,
+            "data": images_dump
+        }
+
+        return jsonify(result)
+
 
 class AlbumImageApi(Resource):
     @swagger.doc({
@@ -305,6 +379,8 @@ class AlbumImageApi(Resource):
             return jsonify({'msg': 'Album already contains this image'})
 
         album.images.append(image)
+
+        image.album_id = a_id
         db.session.commit()
 
         return jsonify({'msg': 'Successfully added image to an album'})

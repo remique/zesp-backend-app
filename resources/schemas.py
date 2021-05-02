@@ -136,7 +136,7 @@ class ImageSchema(ma.Schema):
     class Meta:
         model = Image
         ordered = True
-        fields = ("id", "url", "created_at", "updated_at")
+        fields = ("id", "url", "institution_id", "created_at", "updated_at")
 
 
 class NewsSchema(ma.Schema):

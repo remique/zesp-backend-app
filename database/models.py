@@ -207,13 +207,21 @@ class Image(db.Model):
                            default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, nullable=False,
                            default=db.func.current_timestamp())
+    institution_id = db.Column(
+        db.Integer, db.ForeignKey('institution.id'), nullable=True)
+
+    album_id = db.Column(
+        db.Integer, db.ForeignKey('album.id'), nullable=True)
+
     # albums = db.relationship('Album', secondary=image_has_album_image,
     #                        backref=db.backref('images', lazy='dynamic'))
 
-    def __init__(self, url, created_at, updated_at):
+    def __init__(self, url, created_at, updated_at, institution_id):
         self.url = url
         self.created_at = created_at
         self.updated_at = updated_at
+        self.institution_id = institution_id
+        self.album_id = None
 
 
 class News(db.Model):

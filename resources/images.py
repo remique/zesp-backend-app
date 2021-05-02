@@ -5,8 +5,13 @@ from database.db import db
 from flask_restful_swagger_2 import Api, swagger, Resource, Schema
 from .swagger_models import Image as ImageSwaggerModel
 from werkzeug.utils import secure_filename
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity, current_user, create_refresh_token, get_jwt
+)
 import os
 import uuid
+import math
 
 image_schema = ImageSchema()
 images_schema = ImageSchema(many=True)
@@ -28,12 +33,73 @@ class ImagesApi(Resource):
             '200': {
                 'description': 'Successfully got all the images',
             }
-        }
+        },
+        'parameters': [
+            {
+                'name': 'page',
+                'in': 'query',
+                'type': 'integer',
+                'description': '*Optional*: Which page to return'
+            },
+            {
+                'name': 'per_page',
+                'in': 'query',
+                'type': 'integer',
+                'description': '*Optional*: How many users to return per page'
+            },
+        ],
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def get(self):
         """Return ALL the images"""
-        all_images = Image.query.all()
-        result = images_schema.dump(all_images)
+        claims = get_jwt()
+        user_institution_id = claims['institution_id']
+
+        images_total = Image.query.filter(
+            Image.institution_id == user_institution_id).count()
+
+        MIN_PER_PAGE = 5
+        MAX_PER_PAGE = 30
+
+        page = request.args.get('page')
+        per_page = request.args.get('per_page')
+
+        if page is None or int(page) < 1:
+            page = 1
+
+        if per_page is None:
+            per_page = 15
+
+        if int(per_page) < MIN_PER_PAGE:
+            per_page = MIN_PER_PAGE
+
+        if int(per_page) > MAX_PER_PAGE:
+            per_page = MAX_PER_PAGE
+
+        last_page = math.ceil(int(images_total) / int(per_page))
+
+        if int(page) >= last_page:
+            page = int(last_page)
+
+        page_offset = (int(page) - 1) * int(per_page)
+
+        images_query = Image.query.filter(Image.institution_id == user_institution_id).order_by(
+            Image.id.desc()).offset(page_offset).limit(per_page).all()
+        query_result = images_schema.dump(images_query)
+
+        result = {
+            "total": images_total,
+            "per_page": int(per_page),
+            "current_page": int(page),
+            "last_page": last_page,
+            "data": query_result
+        }
+
         return jsonify(result)
 
     @swagger.doc({
@@ -54,10 +120,19 @@ class ImagesApi(Resource):
             '403': {
                 'description': 'File size limit exceeded',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def post(self):
         """Add a new image"""
+        claims = get_jwt()
+        user_institution_id = claims['institution_id']
+
         url = ''
         if 'file' not in request.files:
             return jsonify({'msg': 'No file part'})
@@ -75,8 +150,9 @@ class ImagesApi(Resource):
 
         created_at = db.func.current_timestamp()
         updated_at = db.func.current_timestamp()
+        institution_id = user_institution_id
 
-        new_image = Image(url, created_at, updated_at)
+        new_image = Image(url, created_at, updated_at, institution_id)
 
         db.session.add(new_image)
         db.session.commit()
@@ -100,14 +176,26 @@ class ImageApi(Resource):
             '200': {
                 'description': 'Successfully got image'
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def get(self, id):
         """Get image by ID"""
+        claims = get_jwt()
+        user_institution_id = claims['institution_id']
+
         single_image = Image.query.get(id)
 
-        if not single_image:
-            return jsonify({'msg': 'No image found'})
+        if single_image is None:
+            return jsonify({'msg': 'Bad id provided'})
+
+        if single_image.institution_id != user_institution_id:
+            return jsonify({'msg': 'This image does not belong to current institution'})
 
         return image_schema.jsonify(single_image)
 
@@ -129,14 +217,26 @@ class ImageApi(Resource):
             '200': {
                 'description': 'Successfully deleted image',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def delete(self, id):
         """Delete image"""
+        claims = get_jwt()
+        user_institution_id = claims['institution_id']
+
         image = db.session.query(Image).filter(Image.id == id).first()
 
         if not image:
             return jsonify({'msg': 'No image found'})
+
+        if image.institution_id != user_institution_id:
+            return jsonify({'msg': 'Provided image does not belong to current institution and therefore cannot be deleted'})
 
         path = image.url
 
@@ -149,4 +249,3 @@ class ImageApi(Resource):
         db.session.commit()
 
         return jsonify({'msg': 'Successfully removed image'})
-

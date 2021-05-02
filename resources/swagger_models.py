@@ -249,9 +249,6 @@ class Album(Schema):
         },
         'description': {
             'type': 'string',
-        },
-        'institution_id': {
-            'type': 'integer',
         }
     }
     required = ['date']
