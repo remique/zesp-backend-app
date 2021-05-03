@@ -131,7 +131,7 @@ class Activity(db.Model):
 class DishMenu(db.Model):
     __tablename__ = 'dishmenu'
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime, nullable=False,
+    date = db.Column(db.Date, nullable=False,
                      default=db.func.current_timestamp())
     institution_id = db.Column(db.Integer, db.ForeignKey('institution.id'))
     dish_id = db.Column(db.Integer, db.ForeignKey('dish.id'))
@@ -293,4 +293,3 @@ class Attendance(db.Model):
 #    def __init__(self, is_delayed, delay):
 #        self.is_delayed = is_delayed
 #        self.delay = delay
-

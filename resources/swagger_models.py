@@ -150,14 +150,11 @@ class DishMenu(Schema):
             'type': 'string',
             'format': 'date'
         },
-        'institution_id': {
-            'type': 'integer'
-        },
         'dish_id': {
             'type': 'integer'
         },
     }
-    required = ['date', 'institution_id', 'dish_id']
+    required = ['date', 'dish_id']
 
 
 class Dish(Schema):

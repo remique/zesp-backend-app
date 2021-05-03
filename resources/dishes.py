@@ -17,6 +17,7 @@ dishes_schema = DishSchema(many=True)
 dishMenu_schema = DishMenuSchema()
 dishMenus_schema = DishMenuSchema(many=True)
 
+
 class DishesApi(Resource):
     @swagger.doc({
         'tags': ['dish'],
@@ -76,8 +77,10 @@ class DishesApi(Resource):
         dishes_total = Dish.query.filter(
             Dish.institution_id == user_institution_id).count()
 
-        dishes_query = User.query.filter(User.institution_id == user_institution_id).offset(
-            page_offset).limit(per_page).all()
+        dishes_query = Dish.query\
+            .filter(Dish.institution_id == user_institution_id)\
+            .offset(page_offset)\
+            .limit(per_page).all()
         query_result = dishes_schema.dump(dishes_query)
 
         result = {
@@ -106,21 +109,27 @@ class DishesApi(Resource):
             '200': {
                 'description': 'Successfully added new dish',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def post(self):
         """Add a new dish"""
+        claims = get_jwt()
+        user_institution_id = claims['institution_id']
+
         name = request.json['name']
         description = request.json['description']
         type_str = request.json['type']
-        institution_id = request.json['institution_id']
+        institution_id = user_institution_id
         is_alternative = request.json['is_alternative']
 
-        institution = Institution.query.get(institution_id)
-        if not institution:
-            return jsonify({'msg': 'Institution does not exist'})
-
-        new_dish = Dish(name, description, type_str, institution_id, is_alternative)
+        new_dish = Dish(name, description, type_str,
+                        institution_id, is_alternative)
 
         db.session.add(new_dish)
         db.session.commit()
@@ -219,18 +228,45 @@ class DishApi(Resource):
 
         return jsonify({"msg": "Successfully deleted dish"})
 
+
 class DishMenusApi(Resource):
     @swagger.doc({
         'tags': ['dishMenu'],
         'description': 'Returns ALL the dish menus',
+        'parameters': [
+            {
+                'name': 'date',
+                'in': 'query',
+                'type': 'string',
+                'format': 'date',
+                'description': '*Optional*: Filter by date'
+            },
+        ],
         'responses': {
             '200': {
                 'description': 'Successfully got all the dish menus',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
     def get(self):
         """Return ALL the dish menus"""
+
+        date_query = request.args.get('date')
+
+        if date_query is not None:
+            pass
+            format_date = datetime.strptime(date_query, '%Y-%m-%d').date()
+            dish_menus = DishMenu.query\
+                .filter(DishMenu.date == format_date).all()
+
+            result = dishMenus_schema.dump(dish_menus)
+            return jsonify(result)
+
         all_dishMenus = DishMenu.query.all()
         result = dishMenus_schema.dump(all_dishMenus)
         return jsonify(result)
@@ -251,12 +287,21 @@ class DishMenusApi(Resource):
             '200': {
                 'description': 'Successfully added new dish menu',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def post(self):
         """Add a new dish menu"""
+        claims = get_jwt()
+        user_institution_id = claims['institution_id']
+
         date_str = request.json['date']
-        institution_id = request.json['institution_id']
+        institution_id = user_institution_id
         dish_id = request.json['dish_id']
 
         date = datetime.strptime(date_str, '%Y-%m-%d').date()
@@ -275,6 +320,7 @@ class DishMenusApi(Resource):
         db.session.commit()
 
         return dishMenu_schema.jsonify(new_dishMenu)
+
 
 class DishMenuApi(Resource):
     # GET single dish menu with given id
@@ -367,3 +413,4 @@ class DishMenuApi(Resource):
         db.session.commit()
 
         return jsonify({"msg": "Successfully deleted dish menu"})
+
