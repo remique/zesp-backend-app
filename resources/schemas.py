@@ -32,6 +32,17 @@ class UserGetSchema(ma.Schema):
     roles = ma.Nested('RoleSchema', many=True)
 
 
+class UserWithGroupsSchema(ma.Schema):
+    class Meta:
+        model = User
+        ordered = True
+        fields = ("id", "email", "firstname", "surname",
+                  "institution_id", "sex", "active", "created_at", "updated_at", "roles", "groups")
+        dateformat = '%Y-%m-%d %H:%M:%S%z'
+    roles = ma.Nested('RoleSchema', many=True)
+    groups = ma.Nested('GroupSchema', many=True)
+
+
 class UserLookupSchema(ma.Schema):
     class Meta:
         model = User

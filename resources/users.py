@@ -1,6 +1,6 @@
 from flask import Response, request, jsonify, make_response, json
 from database.models import User, Activity
-from .schemas import UserGetSchema, UserTokenSchema
+from .schemas import UserGetSchema, UserTokenSchema, UserWithGroupsSchema
 from database.db import db
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -19,6 +19,7 @@ user_schema = UserGetSchema()
 users_schema = UserGetSchema(many=True)
 
 user_token_schema = UserTokenSchema()
+user_with_group_schema = UserWithGroupsSchema()
 
 
 class UsersApi(Resource):
@@ -92,10 +93,10 @@ class UsersApi(Resource):
             User.institution_id == user_institution_id).count()
 
         users_query = User.query\
-                .filter(User.institution_id == user_institution_id)\
-                .order_by(User.id.desc())\
-                .offset(page_offset)\
-                .limit(per_page).all()
+            .filter(User.institution_id == user_institution_id)\
+            .order_by(User.id.desc())\
+            .offset(page_offset)\
+            .limit(per_page).all()
         query_result = users_schema.dump(users_query)
 
         result = {
@@ -187,15 +188,21 @@ class UserApi(Resource):
             '200': {
                 'description': 'Successfully updated user',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def get(self, id):
         single_user = User.query.get(id)
 
         if not single_user:
             return jsonify({'msg': 'No user found'})
 
-        return user_schema.jsonify(single_user)
+        return user_with_group_schema.jsonify(single_user)
 
     @swagger.doc({
         'tags': ['user'],
@@ -219,8 +226,14 @@ class UserApi(Resource):
             '200': {
                 'description': 'Successfully updated user',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def put(self, id):
         """Update user"""
         user = User.query.get(id)
