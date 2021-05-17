@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
@@ -9,6 +9,7 @@ from resources.routes import initialize_routes
 from flask_jwt_extended import JWTManager
 
 from flask_restful_swagger_2 import Api, swagger
+import os
 
 security_definitions = {
     'api_key': {
@@ -29,7 +30,7 @@ do okienka **Authorize**. Po wpisaniu dobrego tokenu możemy w całości korzyst
 
 
 def create_app(cfg):
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='static')
     CORS(app, resources={r"*": {"origins": "*"}})
     app.config.from_object(cfg)
     jwt = JWTManager(app)
@@ -46,8 +47,16 @@ def create_app(cfg):
 		<meta http-equiv="refresh" content="0; url=http://petstore.swagger.io/?docExpansion=none&url=http://localhost:5000/api/swagger.json" />
 		</head>"""
 
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
+    def serve(path):
+        print(path)
+        if path != "" and os.path.exists(app.static_folder + '/' + path):
+            return send_from_directory(app.static_folder, path)
+        else:
+            return send_from_directory(app.static_folder, 'index.html')
+
     init_db(app)
     initialize_routes(api)
 
     return app
-
