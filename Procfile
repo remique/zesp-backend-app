@@ -1,1 +1,1 @@
-web: gunicorn run:create_app('config.DevelopmentConfig')
+web: gunicorn run:app
