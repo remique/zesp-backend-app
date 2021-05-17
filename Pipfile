@@ -20,6 +20,7 @@ flask-restful-swagger-2 = "*"
 flask-apscheduler = "*"
 sqlalchemy = "*"
 psycopg2 = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"
