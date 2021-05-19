@@ -14,10 +14,11 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    # SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:1234@localhost/test_database'
     uri = os.getenv("DATABASE_URL")
-    if uri.startswith("postgres://"):
-        uri = uri.replace("postgres://", "postgresql://", 1)
+
+    if uri is not None:
+        if uri.startswith("postgres://"):
+            uri = uri.replace("postgres://", "postgresql://", 1)
 
     SQLALCHEMY_DATABASE_URI = uri
 
