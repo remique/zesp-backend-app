@@ -1,4 +1,6 @@
 # TODO: Poustawiac jakos legitnie te configi
+import os
+
 
 class Config(object):
     JSON_SORT_KEYS = False
@@ -11,7 +13,8 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:1234@localhost/test_database'
+    # SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:1234@localhost/test_database'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 
 class DevelopmentConfig(Config):

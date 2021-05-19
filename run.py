@@ -2,7 +2,8 @@ from app import create_app
 from scheduler import scheduler
 import sys
 
-app = create_app('config.DevelopmentConfig')
+# app = create_app('config.DevelopmentConfig')
+app = create_app('config.ProductionConfig')
 # if __name__ == '__main__':
 #     app = create_app('config.DevelopmentConfig')
 
