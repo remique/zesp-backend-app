@@ -193,7 +193,8 @@ class GroupActivitiesApi(Resource):
         activity_list = []
 
         role = Role.query.filter(Role.title == role_str).first()
-        group = Group.query.filter(Group.name == group_str).first()
+        group = Group.query.filter(Group.name == group_str)\
+            .filter(Group.institution_id == current_user_inst_id).first()
 
         print("Searching for: ", group.name)
 
