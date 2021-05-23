@@ -78,6 +78,11 @@ class DishesApi(Resource):
         """Add a new dish"""
         claims = get_jwt()
         user_institution_id = claims['institution_id']
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
 
         name = request.json['name']
         description = request.json['description']
@@ -126,13 +131,23 @@ class DishApi(Resource):
             '200': {
                 'description': 'Successfully updated a dish',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
     @jwt_required()
     def put(self, id):
         """Update dish"""
         claims = get_jwt()
         user_institution_id = claims['institution_id']
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
 
         dish = Dish.query.get(id)
 
@@ -189,6 +204,11 @@ class DishApi(Resource):
         """Delete dish"""
         claims = get_jwt()
         user_institution_id = claims['institution_id']
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
 
         dish = db.session.query(Dish).filter(Dish.id == id).first()
 
@@ -274,6 +294,11 @@ class DishMenusApi(Resource):
         """Add a new dish menu"""
         claims = get_jwt()
         user_institution_id = claims['institution_id']
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
 
         date_str = request.json['date']
         institution_id = user_institution_id
@@ -329,11 +354,23 @@ class DishMenuApi(Resource):
             '200': {
                 'description': 'Successfully updated a dish menu',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def put(self, id):
         """Update dish menu"""
         dishMenu = DishMenu.query.get(id)
+        claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
 
         if not dishMenu:
             return jsonify({'msg': 'No dish menu found'})
@@ -377,10 +414,23 @@ class DishMenuApi(Resource):
             '200': {
                 'description': 'Successfully deleted dish menu',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def delete(self, id):
         """Delete dish menu"""
+        claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+
         dishMenu = db.session.query(DishMenu).filter(DishMenu.id == id).first()
         if not dishMenu:
             return jsonify({'msg': 'No dish menu found'})

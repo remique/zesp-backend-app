@@ -74,3 +74,4 @@ def initialize_routes(api):
 
     api.add_resource(AttendanceMApi, '/attendance')
     api.add_resource(AttendanceApi, '/attendance/<id>')
+

@@ -114,6 +114,12 @@ class AttendanceMApi(Resource):
     def post(self):
         """Add a new attendance"""
         claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+
         current_user_id = claims['id']
 
         date_str = request.json['date']
@@ -174,10 +180,23 @@ class AttendanceApi(Resource):
             '200': {
                 'description': 'Successfully updated an attendance',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def put(self, id):
         """Update attendance"""
+        claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+
         attendance = Attendance.query.get(id)
 
         date_str = request.json['date']
@@ -215,10 +234,23 @@ class AttendanceApi(Resource):
             '200': {
                 'description': 'Successfully deleted an attendance',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def delete(self, id):
         """Delete attendance"""
+        claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+        
         attendance = db.session.query(Attendance).filter(
             Attendance.id == id).first()
         db.session.delete(attendance)

@@ -149,6 +149,7 @@ class NewsMApi(Resource):
         """Add a new news"""
         claims = get_jwt()
         user_institution_id = claims['institution_id']
+        user_roles = claims['roles']
         user_id = claims['id']
 
         title = request.json['title']
@@ -156,6 +157,10 @@ class NewsMApi(Resource):
         priority = request.json['priority']
         institution_id = user_institution_id
         author_id = user_id
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
 
         created_at = db.func.current_timestamp()
         updated_at = db.func.current_timestamp()
@@ -215,6 +220,11 @@ class NewsApi(Resource):
         """Update news by its id"""
         claims = get_jwt()
         user_institution_id = claims['institution_id']
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
 
         news = News.query.get(id)
 
@@ -273,6 +283,11 @@ class NewsApi(Resource):
         """Delete news by its id"""
         claims = get_jwt()
         user_institution_id = claims['institution_id']
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
 
         news = db.session.query(News).filter(News.id == id).first()
 

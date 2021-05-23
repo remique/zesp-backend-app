@@ -58,6 +58,12 @@ class ImagesApi(Resource):
     def get(self):
         """Return ALL the images without an album"""
         claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+
         user_institution_id = claims['institution_id']
 
         images_total = Image.query\
@@ -137,6 +143,12 @@ class ImagesApi(Resource):
     def post(self):
         """Add a new image"""
         claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+
         user_institution_id = claims['institution_id']
 
         url = ''
@@ -234,6 +246,12 @@ class ImageApi(Resource):
     def delete(self, id):
         """Delete image"""
         claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+                
         user_institution_id = claims['institution_id']
 
         image = db.session.query(Image).filter(Image.id == id).first()

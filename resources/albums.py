@@ -123,6 +123,11 @@ class AlbumsApi(Resource):
         """Add a new album"""
         claims = get_jwt()
         user_institution_id = claims['institution_id']
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
 
         name = request.json['name']
         date_str = request.json['date']
@@ -162,8 +167,14 @@ class AlbumApi(Resource):
             '200': {
                 'description': 'Successfully got album'
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def get(self, id):
         """Get album by ID"""
         single_album = Album.query.get(id)
@@ -195,11 +206,23 @@ class AlbumApi(Resource):
             '200': {
                 'description': 'Successfully updated album',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def put(self, id):
         """Update album"""
         album = Album.query.get(id)
+        claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
 
         if not album:
             return jsonify({'msg': 'No album found'})
@@ -243,10 +266,23 @@ class AlbumApi(Resource):
             '200': {
                 'description': 'Successfully deleted album',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def delete(self, id):
         """Delete album"""
+        claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+
         album = db.session.query(Album).filter(Album.id == id).first()
 
         if not album:
@@ -377,6 +413,12 @@ class AlbumImageApi(Resource):
         """Add image to an album"""
         i_id = request.json['image_id']
         a_id = request.json['album_id']
+        claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
 
         image = Image.query.get(i_id)
         if image is None:
@@ -438,6 +480,12 @@ class DeleteAlbumImageApi(Resource):
         # i_id = request.json['image_id']
         i_id = image_id
         a_id = request.json['album_id']
+        claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Teacher" and r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
 
         image = Image.query.get(i_id)
         if image is None:

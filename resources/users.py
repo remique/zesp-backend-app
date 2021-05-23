@@ -288,8 +288,14 @@ class UserApi(Resource):
             '200': {
                 'description': 'Successfully deleted user',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def delete(self, id):
         """Delete user"""
         user = db.session.query(User).filter(User.id == id).first()

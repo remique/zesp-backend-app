@@ -130,6 +130,11 @@ class GroupsApi(Resource):
         """Add a new group"""
         current_user_jwt = get_jwt()
         current_user_institution_id = current_user_jwt['institution_id']
+        user_roles = current_user_jwt['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
 
         name = request.json['name']
         institution_id = current_user_institution_id
@@ -195,10 +200,23 @@ class GroupApi(Resource):
             '200': {
                 'description': 'Successfully updated group',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def put(self, id):
         """Update group"""
+        current_user_jwt = get_jwt()
+        user_roles = current_user_jwt['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+
         group = Group.query.get(id)
 
         if not group:
@@ -231,10 +249,22 @@ class GroupApi(Resource):
             '200': {
                 'description': 'Successfully deleted group',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def delete(self, id):
         """Delete group"""
+        current_user_jwt = get_jwt()
+        user_roles = current_user_jwt['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
         group = db.session.query(Group).filter(Group.id == id).first()
 
         if not group:
@@ -290,10 +320,23 @@ class UserGroupApi(Resource):
             '200': {
                 'description': 'Successfully added group to an user',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def post(self):
         """Add group to an user"""
+        current_user_jwt = get_jwt()
+        user_roles = current_user_jwt['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+
         g_id = request.json['group_id']
         u_id = request.json['user_id']
 
@@ -328,10 +371,23 @@ class UserGroupApi(Resource):
             '200': {
                 'description': 'Successfully removed group from the user',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def delete(self):
         """Delete group from the user"""
+        current_user_jwt = get_jwt()
+        user_roles = current_user_jwt['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+
         g_id = request.json['group_id']
         u_id = request.json['user_id']
 

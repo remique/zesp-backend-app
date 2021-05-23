@@ -4,7 +4,7 @@ from .schemas import RoleSchema
 from database.db import db
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
-    get_jwt_identity
+    get_jwt_identity, get_jwt
 )
 from flask_restful_swagger_2 import Api, swagger, Resource, Schema
 from .swagger_models import Role as RoleSwaggerModel
@@ -22,8 +22,14 @@ class RolesApi(Resource):
             '200': {
                 'description': 'Successfully got all the roles',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def get(self):
         """Return ALL the roles"""
         all_roles = Role.query.all()
@@ -46,10 +52,22 @@ class RolesApi(Resource):
             '200': {
                 'description': 'Successfully added new role',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def post(self):
         """Add a new role"""
+        claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
         title = request.json['title']
         created_at = db.func.current_timestamp()
         updated_at = db.func.current_timestamp()
@@ -80,8 +98,14 @@ class RoleApi(Resource):
             '200': {
                 'description': 'Successfully got role'
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def get(self, id):
         """Get role by ID"""
         single_role = Role.query.get(id)
@@ -113,10 +137,23 @@ class RoleApi(Resource):
             '200': {
                 'description': 'Successfully updated a role',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def put(self, id):
         """Update role"""
+        claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+
         role = Role.query.get(id)
 
         if not role:
@@ -149,10 +186,23 @@ class RoleApi(Resource):
             '200': {
                 'description': 'Successfully deleted a role',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def delete(self, id):
         """Delete role"""
+        claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+
         role = db.session.query(Role).filter(Role.id == id).first()
 
         if not role:
@@ -180,8 +230,14 @@ class UserRolesApi(Resource):
             '200': {
                 'description': 'Successfully got all the userroles',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def get(self, userid):
         user = User.query.get(userid)
         if user is None:
@@ -208,10 +264,23 @@ class UserRoleApi(Resource):
             '200': {
                 'description': 'Successfully added role to an user',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def post(self):
         """Add role to an user"""
+        claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+
         r_id = request.json['role_id']
         u_id = request.json['user_id']
 
@@ -254,10 +323,23 @@ class UserRoleApi(Resource):
             '200': {
                 'description': 'Successfully removed role from the user',
             }
-        }
+        },
+        'security': [
+            {
+                'api_key': []
+            }
+        ]
     })
+    @jwt_required()
     def delete(self):
         """Delete role from the user"""
+        claims = get_jwt()
+        user_roles = claims['roles']
+
+        for r in user_roles:
+            if(r['title'] != "Admin"):
+                return jsonify({'msg': 'Insufficient permissions'})
+                
         r_id = request.json['role_id']
         u_id = request.json['user_id']
 
