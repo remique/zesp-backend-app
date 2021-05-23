@@ -205,10 +205,12 @@ class GroupActivitiesApi(Resource):
         # Get users from user institution
         users = User.query.filter(
             User.institution_id == current_user_inst_id).all()
-        print(users)
         # Get users with given role
         users = list(filter(lambda x: role in x.roles, users))
-        print(users)
+
+        for usr in users:
+            print(usr.groups)
+
         # Get users with given group
         users = list(filter(lambda x: group in x.groups, users))
         print(users)
