@@ -116,9 +116,9 @@ class AttendanceMApi(Resource):
         claims = get_jwt()
         user_roles = claims['roles']
 
-        for r in user_roles:
-            if(r['title'] != "Teacher" and r['title'] != "Admin"):
-                return jsonify({'msg': 'Insufficient permissions'})
+        # for r in user_roles:
+        #     if(r['title'] != "Teacher" and r['title'] != "Admin"):
+        #         return jsonify({'msg': 'Insufficient permissions'})
 
         current_user_id = claims['id']
 
@@ -193,9 +193,9 @@ class AttendanceApi(Resource):
         claims = get_jwt()
         user_roles = claims['roles']
 
-        for r in user_roles:
-            if(r['title'] != "Teacher" and r['title'] != "Admin"):
-                return jsonify({'msg': 'Insufficient permissions'})
+        # for r in user_roles:
+        #     if(r['title'] != "Teacher" and r['title'] != "Admin"):
+        #         return jsonify({'msg': 'Insufficient permissions'})
 
         attendance = Attendance.query.get(id)
 
@@ -247,10 +247,10 @@ class AttendanceApi(Resource):
         claims = get_jwt()
         user_roles = claims['roles']
 
-        for r in user_roles:
-            if(r['title'] != "Teacher" and r['title'] != "Admin"):
-                return jsonify({'msg': 'Insufficient permissions'})
-        
+        # for r in user_roles:
+        #     if(r['title'] != "Teacher" and r['title'] != "Admin"):
+        #         return jsonify({'msg': 'Insufficient permissions'})
+
         attendance = db.session.query(Attendance).filter(
             Attendance.id == id).first()
         db.session.delete(attendance)

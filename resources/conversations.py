@@ -225,6 +225,7 @@ class ConversationReplyApi(Resource):
         """Add a new conversation reply"""
         claims_jwt = get_jwt()
         jwt_email = claims_jwt['email']
+        jwt_id = claims_jwt['id']
         current_user = User.query.filter_by(email=jwt_email).first()
 
         reply = request.json['reply']
@@ -253,10 +254,14 @@ class ConversationReplyApi(Resource):
 
         push_message = conversation_reply_schema.dump(new_conv_reply)
 
-        # pusher_client.trigger(u'my-channel', u'my-event',
-        #                       {u'message': u'hello world'})
+        if conv_exists.user_two == jwt_id:
+            user_two_channel = conv_exists.user_one
+        else:
+            user_two_channel = conv_exists.user_two
 
-        pusher_client.trigger(u'my-channel', u'my-event',
+        usr_two_unic = str(user_two_channel)
+
+        pusher_client.trigger(usr_two_unic, u'my-event',
                               push_message)
 
         return conversation_reply_schema.jsonify(new_conv_reply)
