@@ -290,7 +290,9 @@ class AlbumApi(Resource):
 
         images = Image.query.filter(Image.album_id == album.id).all()
 
-        db.session.delete(images)
+        for image in images:
+            db.session.delete(image)
+
         db.session.delete(album)
         db.session.commit()
 
