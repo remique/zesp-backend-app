@@ -22,6 +22,7 @@ sqlalchemy = "*"
 psycopg2 = "*"
 gunicorn = "*"
 pusher = "*"
+google-cloud-storage = "*"
 
 [requires]
 python_version = "3.7"
