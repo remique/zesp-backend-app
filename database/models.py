@@ -214,7 +214,7 @@ class Image(db.Model):
         db.Integer, db.ForeignKey('institution.id'), nullable=True)
 
     album_id = db.Column(
-        db.Integer, db.ForeignKey('album.id'), nullable=True)
+        db.Integer, db.ForeignKey('album.id', ondelete='CASCADE'), nullable=True)
 
     # albums = db.relationship('Album', secondary=image_has_album_image,
     #                        backref=db.backref('images', lazy='dynamic'))
@@ -264,8 +264,7 @@ class Album(db.Model):
         'institution.id'), nullable=False)
     img_count = db.Column(db.Integer, nullable=False)
     images = db.relationship('Image', secondary=image_has_album_image,
-                             cascade="all,delete",
-                             backref=db.backref('albums', lazy='dynamic'))
+                             backref=db.backref('albums', lazy='dynamic'), passive_deletes=True)
 
     def __init__(self, name, date, created_at, updated_at, description, institution_id):
         self.name = name
