@@ -13,6 +13,8 @@ import os
 import uuid
 import math
 
+from google.cloud import storage
+
 image_schema = ImageSchema()
 images_schema = ImageSchema(many=True)
 
@@ -145,6 +147,11 @@ class ImagesApi(Resource):
         claims = get_jwt()
         user_roles = claims['roles']
 
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "key.json"
+        storage_client = storage.Client()
+        bucket = storage_client.bucket("zespol7")
+        bucket_url = "https://storage.cloud.google.com/zespol7/"
+
         for r in user_roles:
             if(r['title'] != "Teacher" and r['title'] != "Admin"):
                 return jsonify({'msg': 'Insufficient permissions'})
@@ -157,14 +164,22 @@ class ImagesApi(Resource):
         file = request.files['file']
         if file.filename == '':
             return jsonify({'msg': 'No selected file'})
+
+        print(file.filename)
+
         if file and allowed_file(file.filename):
             filename = str(uuid.uuid4()) + '.' + file.filename.split(".")[-1]
 
             if not os.path.exists(UPLOAD_FOLDER):
                 os.makedirs(UPLOAD_FOLDER)
 
-            file.save(os.path.join(UPLOAD_FOLDER, filename))
-            url = url_for('static', filename="uploaded_images/"+filename)
+            # file.save(os.path.join(UPLOAD_FOLDER, filename))
+            # url = url_for('static', filename="uploaded_images/"+filename)
+            blob = bucket.blob(filename)
+            blob.upload_from_file(file, content_type='text/plain')
+            blob.make_public()
+            # url = bucket_url + filename
+            url = blob.public_url
 
         created_at = db.func.current_timestamp()
         updated_at = db.func.current_timestamp()
@@ -251,7 +266,7 @@ class ImageApi(Resource):
         for r in user_roles:
             if(r['title'] != "Teacher" and r['title'] != "Admin"):
                 return jsonify({'msg': 'Insufficient permissions'})
-                
+
         user_institution_id = claims['institution_id']
 
         image = db.session.query(Image).filter(Image.id == id).first()

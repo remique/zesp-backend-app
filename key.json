@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "supple-coral-314922",
+  "private_key_id": "5da10e6708b2277e9006cb6cab09da85a90c853a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCtongz/QRbFr7z\nqczvZCIa+DSAivG3MuX0EObfe4U/DkoRfQPRzgIQ1+8bqRQ3wYrERdI2lBO2pAz2\nqWWXFHnuWhY2WS2AB/UljR5pmQzZFS9e9GctmWnUH8xF/44om/4GL69Fat2TibdS\nJ9NwDXLhNgoGKB/eJPlH21huhgQKdL4qkU95YecOmqDwp9PCBKf8FkO4GkKTm5lk\nZCA0cGRZycZAWwNmdt3ViIyI8x2oRy8RiR2s/NAImd1PvhEFq+HYA9Q+YGnSI44L\npY2xdBVS3pw/FJHNjpc/TOUsL2TO7+AZOKMrWdlyKuXoHYSy3G3vSnNaxsd1vszV\n2Mpx0yzHAgMBAAECggEAPNiwctd5jUodRFn+nO1kHjtYeqs2JVLKzoqVvT8V5JDn\nV9WNXxpoEur4uaK4mQlTzZACKGoftmMqv82A8j6Us/gRzJ3XmgQv3ibjv3GI1RHd\nddMDzTDzqwgxl14EvSpdDGHtc9ANMcSS31FhgOTVmyJKxPmOoVQnnwy4opKIG/lV\nUJT929MCHarKt0zy5vVGP500T0+3QOcO+mdEVzN3gSvPj1YjCjGhT9Dcb6YHxe0b\naVw4LOJHt+nxI2fntoQF9Zmdy9ZiTsDA4yPZ/MumY2rGMPHMRleceaZbsODpjsuw\noE4wae3AMFyjIQ+QJJkFRYrmGfrdZ01lu2kBst9BQQKBgQDYqSgdoahpYwmIenQX\n6G02VHa91C4UC4ExiCGyTFWRs10AUQI39zFE663yRc1/QP2KiF7KAY8nEurfkyTz\nswmVPruxlOtOCkjM9zdSCifq9yiDGqHTvMeN+ndNydPco746PNH2SuClXnCTSQ/C\n4d3auQ3cBHeIh37f18VAInSdFwKBgQDNKV6C07lsuCcVikrlEoF4mb18nD9l+DFq\nDRo/X81u4Mw6KYPLlkdRx7KmNMMhjvuwR4lTdOo1ebvSF7k/8L6m03kwRGt52RNo\nJqLsTXUbJFfBTs59gEUqYinp+BN+5dLtiR/iZyvA3H8u0h8FefJFMxGt9KEpA5Ny\n/d4RO86b0QKBgQCLcoxsTfD8K48mNVJlVOZ98m0ejuM9aY40mB7ACFuG1H/GRV19\nMe+XIW2qony6K9VEBbOkps5BYu6jCazd4V0InwDlMikk6H+k1HTZq8m3dG6xu0Fu\n63ExE4UYHw/qUcWM7DpjIBxos1kXow2u6/sD3Nlrw8A/sp3ZaqH9Pm/57wKBgCi1\naLd043obIEY55pqFjYMsnli3eCz3jnaImwiwLccue9eenTQsYYJsqZopJf7mrDJS\nP4F71W0+9nG9m1iAoJPhqk5VhS3sUNl9sR5KUE5Oa8tDo91rMk4ypDZ0rwmi+LOB\nXf5Ckn/2QJY9w0IG7Hempn9p5wCIYR2UGhg5UcnBAoGAZXf+/botaeNR6nX3FF75\n9xrTyIXIAmDxLEq3l1BwuW6BxmG4Wf4zk7nAWia8536HQ5HmZg+yKXWodblsQuX/\nkOgMXg87ThGJDbTelzAtR+BaPmA5VpiFTJJLZFq1/MPcGO+icSyxq3BuOElBv26z\n6OFlmDrsLfKRyUAVOlQZXDM=\n-----END PRIVATE KEY-----\n",
+  "client_email": "zespol7-access@supple-coral-314922.iam.gserviceaccount.com",
+  "client_id": "107628719509298786739",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/zespol7-access%40supple-coral-314922.iam.gserviceaccount.com"
+}

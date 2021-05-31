@@ -283,10 +283,15 @@ class AlbumApi(Resource):
             if(r['title'] != "Teacher" and r['title'] != "Admin"):
                 return jsonify({'msg': 'Insufficient permissions'})
 
-        album = db.session.query(Album).filter(Album.id == id).first()
+        album = Album.query.filter(Album.id == id).first()
 
         if not album:
             return jsonify({'msg': 'No album found'})
+
+        images = Image.query.filter(Image.album_id == album.id).all()
+
+        for image in images:
+            db.session.delete(image)
 
         db.session.delete(album)
         db.session.commit()

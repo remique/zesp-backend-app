@@ -13,6 +13,10 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
+class LocalProductionConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:1234@localhost/test_database'
+
+
 class ProductionConfig(Config):
     uri = os.getenv("DATABASE_URL")
 

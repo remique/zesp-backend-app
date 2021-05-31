@@ -14,6 +14,7 @@ from flask_sqlalchemy import SQLAlchemy
 from .security import generate_salt, generate_hash
 
 import math
+import datetime
 
 user_schema = UserGetSchema()
 users_schema = UserGetSchema(many=True)
@@ -346,9 +347,9 @@ class LoginApi(Resource):
             user_claims = user_token_schema.dump(user)
 
             access_token = create_access_token(
-                identity=email, additional_claims=user_claims)
+                identity=email, additional_claims=user_claims, expires_delta=datetime.timedelta(minutes=60))
             refresh_token = create_refresh_token(
-                identity=email, additional_claims=user_claims)
+                identity=email, additional_claims=user_claims, expires_delta=datetime.timedelta(minutes=60))
             return jsonify({"access_token": access_token, "refresh_token": refresh_token})
         else:
             return jsonify({"msg": "Wrong password!"})
@@ -382,7 +383,7 @@ class RefreshTokenApi(Resource):
         user_claims = user_token_schema.dump(user)
 
         access_token = create_access_token(
-            identity=identity, fresh=False, additional_claims=user_claims)
+            identity=identity, fresh=False, additional_claims=user_claims, expires_delta=datetime.timedelta(minutes=60))
 
         return jsonify(access_token=access_token)
 
